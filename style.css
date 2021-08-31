@@ -1,0 +1,60 @@
+
+.info {
+    display: grid;
+    grid-template-columns: 10% 80% 10%;
+    grid-template-rows: auto;
+    grid-template-areas: "Number"
+                         "Text"
+                         "Min";
+    padding-left: 10px;
+}
+body {
+    background-color: white;
+    
+}
+.number {
+    grid-area: "Number";
+}
+.text {
+    grid-area: "Text";
+}
+.min {
+    grid-area: "Min";
+}
+.head {
+    background-color: rgb(17, 4, 131);
+    height: 50px;
+    justify-content: left;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    /* outline: 3px dashed yellow; */
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 5%;
+
+}
+.searchbox input{
+    font-size: 2em;
+    /* outline: 3px dotted black; */
+    
+}
+.searchbox {
+    display: flex;
+    justify-content: center;
+    margin-top: 20%;
+}
+
+    
+.main {
+    background-color: black;
+    padding-top: 10px;
+    padding-bottom: 5px;
+    /* outline: 3px dashed red; */
+    margin-left: 10%;
+    margin-right: 10%;
+}
+.mainstatus{
+    padding: 10%;
+    /* outline: 3px dashed red; */
+}
