@@ -7,10 +7,46 @@ function append(parent, el)
 {
     return parent.appendChild(el);
 }
-function getInput(input){
+function getDestId(destination){
+    const url = `https://api.resrobot.se/v2/location.name.json?key=358f023f-767a-435c-9974-1cca25df5758&input=${destination}`;
+
+    fetch(url)
+
+        .then((resp) => resp.json())
+        .then(function (data) {
+
+            let destinationId = data.StopLocation[0].id;
+            let longitude = data.StopLocation[0].lon;
+            let lattitude = data.StopLocation[0].lat;
+
+            useCoord(longitude,lattitude);
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+}
+function useCoord(longitude, lattitude){
+    const url = `https://api.resrobot.se/v2/location.nearbystops.json?key=9eb605e0-b6cd-4d6f-a4ca-270ae91630c9&originCoordLat=${lattitude}&originCoordLong=${longitude}`;
+
+    fetch(url)
+
+        .then((resp) => resp.json())
+        .then(function (data) {
+
+ 
+
+        })
+        .catch(function (error) {
+            console.log(error);
+        })
+}
+function getDestination(input){
+
     document.getElementById("numb").innerHTML = '';
     document.getElementById("text").innerHTML = '';
     document.getElementById("min").innerHTML = '';
+
     if (input.keyCode === 13) {
         let destination = document.getElementById("searchinput").value;
         input.preventDefault();
@@ -18,10 +54,9 @@ function getInput(input){
     }
 }
 
-
 function getID(destination)
 {
-    const url = `https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/typeahead.json?key=50f2bd202a09473b93f699dbe808b668&searchstring=${destination}&stationsonly=true`;
+    const url = `http://api.sl.se/api2/typeahead.json?key=50f2bd202a09473b93f699dbe808b668&searchstring=${destination}&stationsonly=true`;
 
     fetch(url)
 
@@ -39,8 +74,7 @@ function getID(destination)
 }
 function useData(id){
     
-
-    const url = `https://cors-anywhere.herokuapp.com/http://api.sl.se/api2/realtimedeparturesv4.json?key=c27ae9f15506493b92392470334802a7&siteid=${id}&timewindow=10`;
+    const url = `http://api.sl.se/api2/realtimedeparturesv4.json?key=c27ae9f15506493b92392470334802a7&siteid=${id}&timewindow=10`;
     
     fetch(url)
         .then((resp) => resp.json())
@@ -63,7 +97,6 @@ function useData(id){
                 append(text, destinationName);
                 append(min, time);
                 
-
             })
         })
         .catch(function (error) {
