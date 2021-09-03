@@ -1,11 +1,9 @@
-let mintoWalk;
+let secondstoDest;
+
 function creatingElement(element) {
     return document.createElement(element);
 }
 
-function append(parent, el) {
-    return parent.appendChild(el);
-}
 function getDestId(destination) {
     const url = `https://api.resrobot.se/v2/location.name.json?key=358f023f-767a-435c-9974-1cca25df5758&input=${destination}`;
 
@@ -41,56 +39,43 @@ function useCoord(longitude, lattitude, startlattitude, startlongitude) {
             console.log(originTime);
             console.log(destinationTime);
 
+            const oTime = calculate(originTime);
+            const dTime = calculate(destinationTime);
 
-            const timeString1 = originTime; // input string
-
-            const arr = timeString1.split(":"); // splitting the string by colon
-
-            const seconds = arr[0] * 3600 + arr[1] * 60 + (+arr[2]); // converting
-
-            console.log(seconds);
-
-            const timeString2 = destinationTime; // input string
-
-            const arr2 = timeString2.split(":"); // splitting the string by colon
-
-            const seconds2 = arr2[0] * 3600 + arr2[1] * 60 + (+arr2[2]); // converting
-
-            console.log(seconds2);
-
-            let subraction = (seconds2 - seconds) / 60;
-
-            console.log(subraction);
-
-            mintoWalk = subraction;
-            console.log("useCoords-metoden:" + mintoWalk);
+            secondstoDest = dTime;
+            if (secondstoDest != undefined) {
+                
+                console.log(secondstoDest);
+            }
 
         })
         .catch(function (error) {
             console.log(error);
         })
 }
+function calculate(time) {
+    const arr = time.split(":");
+    const seconds = arr[0] * 3600 + arr[1] * 60 + (+arr[2]);
+
+    return seconds;
+}
 function getDestination(event) {
-    
-    console.log("Inside getDesination");
+
+    let destination = document.getElementById("searchinput").value;
+
+    getDestId(destination);
+    getID(destination);
 
     document.getElementById("numb").innerHTML = '';
     document.getElementById("text").innerHTML = '';
     document.getElementById("min").innerHTML = '';
-    
-    if (event.keyCode === 13){
-        
-        let destination = document.getElementById("searchinput").value;
-    }
-    event.preventDefault();
-    
-
-
-
-    getDestId(destination);
-    getID(destination);
-    
 }
+
+// event.preventDefault();
+
+
+setInterval(getDestination, 30000)
+
 
 function getID(destination) {
     const url = `http://api.sl.se/api2/typeahead.json?key=50f2bd202a09473b93f699dbe808b668&searchstring=${destination}&stationsonly=true`;
@@ -111,7 +96,10 @@ function getID(destination) {
 }
 function useData(id, station) {
 
-    const url = `http://api.sl.se/api2/realtimedeparturesv4.json?key=c27ae9f15506493b92392470334802a7&siteid=${id}&timewindow=30`;
+    document.getElementById("numb").innerHTML = '';
+    document.getElementById("text").innerHTML = '';
+    document.getElementById("min").innerHTML = '';
+    const url = `http://api.sl.se/api2/realtimedeparturesv4.json?key=c27ae9f15506493b92392470334802a7&siteid=${id}&timewindow=20`;
 
     let timetable = { Station: station, Depatures: [] };
 
@@ -120,83 +108,65 @@ function useData(id, station) {
         .then(function (data) {
 
             let allData = data.ResponseData;
-            let transports = [allData.Metros, allData.Buses, allData.Trains, allData.Ships]
+
+
+            let transports = [allData.Metros, allData.Buses, allData.Trains]
 
             transports.forEach(mode => {
                 mode.forEach(a => {
                     let departure = {
-
-                        Line = a.LineNumber,
-                        Destination = a.Destination,
-                        Expected = a.ExpectedDateTime,
-                        DisplayTime = a.DisplayTime
+                        Destination: a.Destination,
+                        Expected: a.ExpectedDateTime,
+                        Line: a.LineNumber,
+                        DisplayTime: a.DisplayTime,
+                        Transport: a.TrasportMode
                     };
                     timetable.Depatures.push(departure);
                 });
             });
 
             sortOnDate(timetable);
+            console.log(timetable);
 
-            transports.map(function (deps) {
+            timetable.Depatures.forEach(deps => {
 
-                lineNumber = creatingElement('div'),
-                destinationName = creatingElement('div')
-                time = creatingElement('div');
+                let unsliced = deps.Expected;
+                const dateStr = unsliced,
 
-                lineNumber.innerHTML = deps.LineNumber;
-                destinationName = deps.Destination;
-                time = deps.DisplayTime;
-                
-                append(numb, lineNumber);
-                append(text, destinationName);
-                append(min, time);
+                    [yyyy, mm, dd, hh, mi, sec] = dateStr.split(/[/:\-T]/)
 
+                let sliced = calculate(`${hh}:${mi}:${sec}`);
 
-            })
-            
-            // let trains = data.ResponseData.Metros;
+                if (secondstoDest != undefined) {
+                    
+                    console.log(secondstoDest);
+                }
+                if (secondstoDest <= sliced) {
 
-            // trains.map(function (train) {
-
-            //     let div = creatingElement('div'),
-            //         lineNumber = creatingElement('div'),
-            //         destinationName = creatingElement('div')
-            //     time = creatingElement('div');
+                    console.log("DU HANN!" + sliced + 'SEK' + '<' + secondstoDest + 'SEK');
 
 
 
+                    lineNumber = creatingElement('div');
+                    destinationName = creatingElement('div');
+                    time = creatingElement('div');
 
-            //     // let displaytime = train.DisplayTime;
-            //     // let mintoDepature = displaytime.charAt(0);
-            //     // let result = mintoDepature - mintoWalk;
+                    lineNumber.innerHTML = deps.Line;
+                    destinationName.innerHTML = deps.Destination;
+                    time.innerHTML = deps.DisplayTime;
 
-            //     // if (result < 0) {
-            //     //     result = 0;
-            //     //     console.log(result);
-            //     // }
-            //     // else if (result > 0) {
+                    document.getElementById("numb").appendChild(lineNumber);
+                    document.getElementById("text").appendChild(destinationName);
+                    document.getElementById("min").appendChild(time);
 
-            //     //     lineNumber.innerHTML = train.LineNumber;
-            //     //     destinationName.innerHTML = train.Destination;
-            //     //     train.DisplayTime = result + "min";
 
-            //     //     time.innerHTML = train.DisplayTime;
-            //     // }
+                }
+                else if (secondstoDest >= sliced) {
+                    console.log("DU HANN INTE TYVÄRR" + sliced + 'SEK' + '>' + secondstoDest + 'SEK')
+                }
+            });
 
-            //     let displaytime = train.DisplayTime;
-            //     let mintoDepature = displaytime.charAt(0);
-            //     let result = mintoDepature - mintoWalk;
 
-            //     console.log(result);
-
-            //     lineNumber.innerHTML = train.LineNumber;
-            //     destinationName.innerHTML = train.Destination;
-            //     time.innerHTML = train.DisplayTime;
-            //     append(numb, lineNumber);
-            //     append(text, destinationName);
-            //     append(min, time);
-
-            // })
         })
         .catch(function (error) {
             console.log(error);
