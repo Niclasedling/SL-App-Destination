@@ -74,7 +74,7 @@ function getDestination(event) {
 // event.preventDefault();
 
 
-setInterval(getDestination, 30000)
+setInterval(getDestination, 60000)
 
 
 function getID(destination) {
