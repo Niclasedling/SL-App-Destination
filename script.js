@@ -113,13 +113,14 @@ function useData(id, station) {
             let transports = [allData.Metros, allData.Buses, allData.Trains]
 
             transports.forEach(mode => {
+                
                 mode.forEach(a => {
                     let departure = {
                         Destination: a.Destination,
                         Expected: a.ExpectedDateTime,
                         Line: a.LineNumber,
                         DisplayTime: a.DisplayTime,
-                        Transport: a.TrasportMode
+                        Transport: translate(a.TrasportMode)
                     };
                     timetable.Depatures.push(departure);
                 });
@@ -127,7 +128,7 @@ function useData(id, station) {
 
             sortOnDate(timetable);
             console.log(timetable);
-
+            console.log(timetable.TrasportMode)
             timetable.Depatures.forEach(deps => {
 
                 let unsliced = deps.Expected;
@@ -150,14 +151,17 @@ function useData(id, station) {
                     lineNumber = creatingElement('div');
                     destinationName = creatingElement('div');
                     time = creatingElement('div');
+                    transportMode = creatingElement("div");
 
                     lineNumber.innerHTML = deps.Line;
                     destinationName.innerHTML = deps.Destination;
                     time.innerHTML = deps.DisplayTime;
+                    transportMode.innerHTML = deps.Transport;
 
                     document.getElementById("numb").appendChild(lineNumber);
                     document.getElementById("text").appendChild(destinationName);
                     document.getElementById("min").appendChild(time);
+                    document.getElementById("trans").appendChild(transportMode);
 
 
                 }
@@ -178,4 +182,21 @@ function sortOnDate(timetable) {
     timetable.Depatures.sort(function (a, b) {
         return new Date(a.Expected) - new Date(b.Expected);
     })
+}
+
+function translate(string){
+    switch (string) {
+        case "BUS":
+            return "Buss";
+            
+        case "METRO":
+            return "Tunnelbana";
+            
+        case "TRAIN":
+            return "Tåg";
+            
+
+        default:
+            break;
+    }
 }

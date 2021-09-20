@@ -1,25 +1,29 @@
 
 .info {
     display: grid;
-    grid-template-columns: 20% 70% 10%;
+    grid-template-columns: 20% 60% 10% 10%;
     grid-template-rows: auto;
     grid-template-areas: "Number"
                          "Text"
-                         "Min";
+                         "Min"
+                         "Trans";
     padding-left: 10px;
 }
 body {
     background-color: white;
     
 }
-.number {
+.Number {
     grid-area: "Number";
 }
-.text {
+.Text {
     grid-area: "Text";
 }
-.min {
+.Min {
     grid-area: "Min";
+}
+.Trans {
+    grid-area: "Trans";
 }
 .head {
     background-color: rgb(17, 4, 131);
